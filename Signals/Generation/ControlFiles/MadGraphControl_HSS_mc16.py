@@ -216,6 +216,11 @@ arrange_output(process_dir=process_dir,
                saveProcDir=True,
                runArgs=runArgs)
 
+## TEST
+## Add filters
+evt_multiplier = 10
+include ( 'GeneratorFilters/HTT_BSMFilter.py' )
+
 #---------------------------------------------------------------------------
 # Parton Showering Generation
 #---------------------------------------------------------------------------

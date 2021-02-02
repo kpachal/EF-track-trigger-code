@@ -2,7 +2,7 @@ include ( 'MadGraphControl/SUSY_SimplifiedModel_PreInclude.py' )
 
 #############################################
 ### Production of GMSB sleptons
-### decaying to displaced e/mu + gravitino.
+### decaying to displaced e/mu/tau + gravitino.
 ### Kate obtained job options from here:
 ### https://its.cern.ch/jira/browse/ATLMCPROD-5638
 ### Sleptons created in generation process and
@@ -40,28 +40,34 @@ generate p p > el- el+ $ susystrong @1
 add process p p > er- er+ $ susystrong @1
 add process p p > mul- mul+ $ susystrong @1
 add process p p > mur- mur+ $ susystrong @1
+add process p p > ta1- ta1+ $ susystrong @1
+add process p p > ta2- ta2+ $ susystrong @1
 add process p p > el- el+ j $ susystrong @2
 add process p p > er- er+ j $ susystrong @2
 add process p p > mul- mul+ j $ susystrong @2
 add process p p > mur- mur+ j $ susystrong @2
+add process p p > ta1- ta1+ j $ susystrong @2
+add process p p > ta2- ta2+ j $ susystrong @2
 add process p p > el- el+ j j $ susystrong @3
 add process p p > er- er+ j j $ susystrong @3
 add process p p > mul- mul+ j j $ susystrong @3
 add process p p > mur- mur+ j j $ susystrong @3
+add process p p > ta1- ta1+ j j $ susystrong @3
+add process p p > ta2- ta2+ j j $ susystrong @3
 '''
 njets = 2
-evgenLog.info('Registered generation of slepton-pair production via direct decays; mass point ' + str(mslep) + ' with lifetime ' + str(lifetime))
+evgenLog.info('Registered generation of slepton and stau pair production via direct decays; mass point ' + str(mslep) + ' with lifetime ' + str(lifetime))
 
-evgenConfig.contact = [ "emma.sian.kuwertz@cern.ch" ]
+evgenConfig.contact = [ "katherine.pachal@cern.ch" ]
 evgenConfig.keywords += ['SUSY','slepton','longLived','gravitino','simplifiedModel']
-evgenConfig.description = 'Direct slepton-pair production in simplified model with non-prompt decays, m_sleptonLR = %s GeV, lifetime = %s'%(mslep,lifetime)
+evgenConfig.description = 'Direct slepton/stau-pair production in simplified model with non-prompt decays, m_sleptonLR = %s GeV, lifetime = %s'%(mslep,lifetime)
 
 if lifetime != 0:
   evgenConfig.specialConfig = 'GMSBSlepton=%s*GeV;GMSBGravitino=%s*GeV;GMSBSleptonTime=%s*ns;preInclude=SimulationJobOptions/preInclude.SleptonsLLP.py' % (mslep,0.0000001,lifetime)
 
 # Filter and event multiplier 
-evt_multiplier = 3
-
+evt_multiplier = 10
+include ( 'GeneratorFilters/HTT_BSMFilter.py' )
 
 include ( 'MadGraphControl/SUSY_SimplifiedModel_PostInclude.py' )
 
@@ -81,6 +87,10 @@ bonus_file.write( '-1000011 Anti-selectronL %s (MeV/c) fermion Selectron 1\n'%(s
 bonus_file.write( '-2000011 Anti-selectronR %s (MeV/c) fermion Selectron 1\n'%(str(mslep)))
 bonus_file.write( '-1000013 Anti-smuonL %s (MeV/c) fermion Smuon 1\n'%(str(mslep)))
 bonus_file.write( '-2000013 Anti-smuonR %s (MeV/c) fermion Smuon 1\n'%(str(mslep)))
+bonus_file.write( '1000015 Stau1 %s (MeV/c) fermion Stau -1\n'%(str(mslep)))
+bonus_file.write( '2000015 Stau2 %s (MeV/c) fermion Stau -1\n'%(str(mslep)))
+bonus_file.write( '-1000015 Anti-stau1 %s (MeV/c) fermion Stau 1\n'%(str(mslep)))
+bonus_file.write( '-2000015 Anti-stau2 %s (MeV/c) fermion Stau 1\n'%(str(mslep)))
 bonus_file.close()
 
 testSeq.TestHepMC.G4ExtraWhiteFile='pdg_extras.dat'

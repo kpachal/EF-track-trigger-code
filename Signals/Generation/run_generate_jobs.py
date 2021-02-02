@@ -18,7 +18,7 @@ useBatch = True
 batch_type = "condor"
 
 # Turn on only what you want for smaller tests
-doModels = ["higgsportal","slep"]
+doModels = ["slep","higgsportal","rhadron"]
 
 # If some jobs failed, regenerate just those.
 # If this list is empty, will do everything.
@@ -31,10 +31,7 @@ rerun = [#"stau_100_0_0p01ns",
         #"stau_500_0_1ns",
         ]
 
-DSID = 999999
-
-nEvents = 10000
-#nEvents=10
+DSID = 100001
 
 # Replace with something importable later
 # once we have more models and a real grid.
@@ -42,29 +39,43 @@ nEvents = 10000
 grid = {
  "slep" : {
    "documentation" : "https://its.cern.ch/jira/browse/ATLMCPROD-5638",
-   "mPar" : [100, 500],
+   "mPar" : [50],
    "mChild" : [0],
    "lifetime" : [0.1],
-   "joTemplate" : "mc.MGPy8EG_A14NNPDF23LO_StauStau_LLP_{0}_{1}_{2}ns.py",
+   "joTemplate" : "mc.MGPy8EG_A14NNPDF23LO_SlepSlep_LLP_{0}_{1}_{2}ns.py",
    "controlFile" : "MadGraphControl_SimplifiedModel_SlepSlep_direct_LLP.py"
  },
  "higgsportal" : {
    "documentation" : "https://its.cern.ch/jira/browse/ATLMCPROD-6900",
    "mPar" : [125],
-   "mChild" : [55],
-   "lifetime" : [0.1],
+   "mChild" : [15,60],
+   "lifetime" : [0.1,0.5],
    "joTemplate" : "mc.MGPy8EG_A14NNPDF23_NNPDF31ME_HSSLLP_{0}_{1}_{2}ns.py",
    "controlFile" : "MadGraphControl_HSS_mc16.py"
  },
+ "rhadron" : {
+   "documentation" : "https://its.cern.ch/jira/browse/ATLMCPROD-8791",
+   "mPar" : [2000],
+   "mChild" : [1950],
+   "lifetime" : [1],
+   "joTemplate" : "mc.MGPy8EG_A14NNPDF23LO_GG_qqn1_{0}_{1}_rpvLF_{2}ns.py",
+   "controlFile" : "MadGraphControl_SimplifiedModel_RPV_LLP_Filtered.py",
+ }
 }
 
 parameters = {
  "slep" : {
-   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/run_slep"
+   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/run_slep",
+   "nEvents" : 10000,
  },
  "higgsportal" : {
    "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/run_higgsportal"
+   "nEvents" : 10000,
  },
+ "rhadron" : {
+   "rundir" : "/eos/user/k/kpachal/PhaseIITrack/Signals/run_rhadron"
+ },
+  "nEvents" : 1000,
 }
 
 
@@ -123,10 +134,10 @@ for model in doModels :
     # Get ready to run
     random = random+1
     path_command = "JOBOPTSEARCHPATH=/afs/cern.ch/work/k/kpachal/PhaseIITrack/Signals/Generation/ControlFiles/:$JOBOPTSEARCHPATH"
-    generate_command = "Gen_tf.py --ecmEnergy={0} --firstEvent=1 --jobConfig={1}/{2} --maxEvents={3} --outputEVNTFile=test_evgen.EVNT.root --randomSeed={4}".format(CME,dir_name,DSID,nEvents,random)
+    generate_command = "Gen_tf.py --ecmEnergy={0} --firstEvent=1 --jobConfig={1}/{2} --maxEvents={3} --outputEVNTFile=test_evgen.EVNT.root --randomSeed={4}".format(CME,dir_name,DSID,parameters[model]["nEvents"],random)
     # Add this back in if I have my own Athena mods at some point
-    #source_command = "source build/x86_64-centos7-gcc62-opt/setup.sh"
-    run_command = """echo 'starting job.';\ncd {0};\nasetup --restore;\n{1};\ncd {2};\n{3}\n""".format(os.getcwd(),path_command,dir_name,generate_command)
+    source_command = "source ../Filtering/build/x86_64-centos7-gcc62-opt/setup.sh"
+    run_command = """echo 'starting job.';\ncd {0};\nasetup --restore;\n{1};\n{4};\ncd {2};\n{3}\n""".format(os.getcwd(),path_command,dir_name,generate_command,source_command)
 
     if isTest :
       print(generate_command)
@@ -142,4 +153,4 @@ for model in doModels :
       subprocess.call(local_command, shell=True) 
     
     # Uncomment to do just one point
-    #break  
+    break  
