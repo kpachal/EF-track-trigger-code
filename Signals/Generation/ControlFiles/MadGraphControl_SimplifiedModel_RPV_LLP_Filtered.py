@@ -124,8 +124,30 @@ elif gentype == "TT":
 	evgenConfig.keywords += ['stop','SUSY','simplifiedModel','RPV', 'neutralino','longLived']
 	evgenConfig.description = 'stop pair production with stop -> top+neutralino, neutralino->tbs via RPV UDD coupling. m_stop = %s GeV, m_N1 = %s GeV'%(masses['1000006'],masses['1000022'])
 
-evt_multiplier = 10
+# Filtering and an appropriate event number modifier
+# Filter is only between 1% and 2% efficient
+evt_multiplier = 100
 include ( 'GeneratorFilters/HTT_BSMFilter.py' )
+# Since these are decaying in generation instead of in simulation,
+# we need to filter either on the LLP neutralino, but allowing
+# intermediate decay statuses. I'll just ignore status for now.
+# Since there are two susy particles per event but the neutralino is the
+# important one, also set a PDG ID.
+filtSeq.filter_region1.considerStatus = False
+filtSeq.filter_region1.useIsBSM = False
+filtSeq.filter_region1.particlePDG = [1000022]
+filtSeq.filter_region2.considerStatus = False
+filtSeq.filter_region2.useIsBSM = False
+filtSeq.filter_region2.particlePDG = [1000022]
+filtSeq.filter_region3.considerStatus = False
+filtSeq.filter_region3.useIsBSM = False
+filtSeq.filter_region3.particlePDG = [1000022]
+filtSeq.filter_region4.considerStatus = False
+filtSeq.filter_region4.useIsBSM = False
+filtSeq.filter_region4.particlePDG = [1000022]
+filtSeq.filter_region5.considerStatus = False
+filtSeq.filter_region5.useIsBSM = False
+filtSeq.filter_region5.particlePDG = [1000022]
 
 #keepOutput=True
 include ( 'MadGraphControl/SUSY_SimplifiedModel_PostInclude.py' )

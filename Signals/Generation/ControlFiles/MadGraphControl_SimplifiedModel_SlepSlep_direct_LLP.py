@@ -66,7 +66,7 @@ if lifetime != 0:
   evgenConfig.specialConfig = 'GMSBSlepton=%s*GeV;GMSBGravitino=%s*GeV;GMSBSleptonTime=%s*ns;preInclude=SimulationJobOptions/preInclude.SleptonsLLP.py' % (mslep,0.0000001,lifetime)
 
 # Filter and event multiplier 
-evt_multiplier = 10
+evt_multiplier = 200
 include ( 'GeneratorFilters/HTT_BSMFilter.py' )
 
 include ( 'MadGraphControl/SUSY_SimplifiedModel_PostInclude.py' )

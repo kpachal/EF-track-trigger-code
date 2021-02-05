@@ -68,6 +68,14 @@ else:
 # MG5 Run Card
 #---------------------------------------------------------------------------
 
+# Filter is 1% to 2% efficient
+# and we also lose events due to other causes
+# so it needs a big multiplier.
+safefactor=200
+if runArgs.maxEvents > 0: 
+    nevents = runArgs.maxEvents*safefactor
+else: nevents = 5000*safefactor
+
 run_card_extras = { 
     'lhe_version':'3.0',
     'cut_decays':'F',
@@ -94,13 +102,9 @@ run_card_extras = {
     'dral':'0' ,
     'use_syst':'T',
     'sys_scalefact': '1 0.5 2',
-    'sys_pdf'      : "NNPDF31_lo_as_0118"
+    'sys_pdf'      : "NNPDF31_lo_as_0118",
+    'nevents' : nevents
     }
-
-safefactor=1.1 #generate extra 10% events in case any fail showering
-if runArgs.maxEvents > 0: 
-    nevents = runArgs.maxEvents*safefactor
-else: nevents = 5000*safefactor
 
 modify_run_card(run_card_input=get_default_runcard(process_dir),
                 run_card_backup=process_dir+'/Cards/run_card_backup.dat',
@@ -216,10 +220,17 @@ arrange_output(process_dir=process_dir,
                saveProcDir=True,
                runArgs=runArgs)
 
-## TEST
-## Add filters
-evt_multiplier = 10
+## Add filters.
+## We're going to filter on the LLPs because there are a ton
+## of hadronic things in the final state (b-jet based) to make a mess.
+
 include ( 'GeneratorFilters/HTT_BSMFilter.py' )
+# BSM Higgses turn up with isBSM flag so don't need too much here.
+filtSeq.filter_region1.considerStatus = False
+filtSeq.filter_region2.considerStatus = False
+filtSeq.filter_region3.considerStatus = False
+filtSeq.filter_region4.considerStatus = False
+filtSeq.filter_region5.considerStatus = False
 
 #---------------------------------------------------------------------------
 # Parton Showering Generation
@@ -248,7 +259,7 @@ testSeq.TestHepMC.MaxNonG4Energy = 100000000 #in MeV
 evgenConfig.description = "Displaced hadronic jets process Higgs > S S with mH={}GeV, mS={}GeV".format(mH, mhS)
 evgenConfig.keywords = ["exotic", "BSM", "BSMHiggs", "longLived"]
 evgenConfig.contact  = ['simon.berlendis@cern.ch', 'hao.zhou@cern.ch',
-                        'Cristiano.Alpigiani@cern.ch', 'hrussell@cern.ch' ]
+                        'Cristiano.Alpigiani@cern.ch', 'hrussell@cern.ch', 'katherine.pachal@cern.ch' ]
 evgenConfig.process="Higgs --> LLPs"
 evgenConfig.inputfilecheck = 'tmp_LHE_events'
 runArgs.inputGeneratorFile='tmp_LHE_events.events'

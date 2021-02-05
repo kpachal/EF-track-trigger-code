@@ -18,7 +18,7 @@ useBatch = True
 batch_type = "condor"
 
 # Turn on only what you want for smaller tests
-doModels = ["slep","higgsportal","rhadron"]
+doModels = ["slep","rhadron"]
 
 # If some jobs failed, regenerate just those.
 # If this list is empty, will do everything.
@@ -65,17 +65,17 @@ grid = {
 
 parameters = {
  "slep" : {
-   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/run_slep",
-   "nEvents" : 10000,
+   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/small_nevts/run_slep",
+   "nEvents" : 500,
  },
  "higgsportal" : {
-   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/run_higgsportal"
-   "nEvents" : 10000,
+   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/small_nevts/run_higgsportal",
+   "nEvents" : 500,
  },
  "rhadron" : {
-   "rundir" : "/eos/user/k/kpachal/PhaseIITrack/Signals/run_rhadron"
+   "rundir" : "/eos/user/k/kpachal/PhaseIITrack/Signals/small_nevts/run_rhadron",
+  "nEvents" : 500,
  },
-  "nEvents" : 1000,
 }
 
 
@@ -153,4 +153,4 @@ for model in doModels :
       subprocess.call(local_command, shell=True) 
     
     # Uncomment to do just one point
-    break  
+    #break  
