@@ -1,3 +1,6 @@
-Signals/Generation/batch_*
 .asetup.save
 *.cc
+*.pyc
+outputFiles*
+plots
+batch_*
