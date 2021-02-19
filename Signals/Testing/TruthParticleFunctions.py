@@ -36,7 +36,7 @@ def decaysToSelf(particle) :
   return not notSelfDecay
 
 
-def findBSMParticles(truthparticles,PDGID=None,decays=False) :
+def findBSMParticles(truthparticles,PDGID=None) :
 
   BSM_particles = []
   for iparticle,particle in enumerate(truthparticles):
@@ -51,10 +51,10 @@ def findBSMParticles(truthparticles,PDGID=None,decays=False) :
       continue
 
     # Find stable particles or particle not decaying into itself
-    if decays :
+    if particle.hasDecayVtx() :
       if not decaysToSelf(particle) :
         BSM_particles.append(particle)
-    if not particle.hasDecayVtx() :
+    else :
       BSM_particles.append(particle)
 
   return BSM_particles
