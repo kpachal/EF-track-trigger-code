@@ -2,11 +2,19 @@
 
 import os
 import subprocess
+import glob
+import shutil
 from magic.condor_handler import CondorHandler
 import itertools
 
 # Do everything but submit if true
 isTest = False
+
+# Gridpack mode?
+doGridpack = True
+# If true, create the gridpack
+# If false, run with it
+creation = False
 
 # CME:
 # Currently 14 TeV, but should also do 100.
@@ -18,7 +26,7 @@ useBatch = True
 batch_type = "condor"
 
 # Turn on only what you want for smaller tests
-doModels = ["slep","rhadron"]
+doModels = ["rhadron","slep"]
 
 # If some jobs failed, regenerate just those.
 # If this list is empty, will do everything.
@@ -65,16 +73,16 @@ grid = {
 
 parameters = {
  "slep" : {
-   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/small_nevts/run_slep",
-   "nEvents" : 500,
+   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/run_slep",
+   "nEvents" : 50,
  },
  "higgsportal" : {
-   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/small_nevts/run_higgsportal",
-   "nEvents" : 500,
+   "rundir" : "/eos/home-k/kpachal/PhaseIITrack/Signals/run_higgsportal",
+   "nEvents" : 50,
  },
  "rhadron" : {
-   "rundir" : "/eos/user/k/kpachal/PhaseIITrack/Signals/small_nevts/run_rhadron",
-  "nEvents" : 500,
+   "rundir" : "/eos/user/k/kpachal/PhaseIITrack/Signals/run_rhadron",
+  "nEvents" : 50,
  },
 }
 
@@ -111,6 +119,11 @@ for model in doModels :
     tag_string = "{0}_{1}_{2}_{3}ns".format(model,point[0],point[1],point[2])
     tag_string = tag_string.replace(".","p")
     dir_name = parameters[model]["rundir"]+"/"+tag_string
+    if doGridpack :
+      if creation :
+        dir_name += "_gridpack"
+      else :
+        dir_name += "_gridpack_testing"
 
     # For rerunning failed points
     if len(rerun) > 0 :
@@ -133,11 +146,34 @@ for model in doModels :
 
     # Get ready to run
     random = random+1
-    path_command = "JOBOPTSEARCHPATH=/afs/cern.ch/work/k/kpachal/PhaseIITrack/Signals/Generation/ControlFiles/:$JOBOPTSEARCHPATH"
-    generate_command = "Gen_tf.py --ecmEnergy={0} --firstEvent=1 --jobConfig={1}/{2} --maxEvents={3} --outputEVNTFile=test_evgen.EVNT.root --randomSeed={4}".format(CME,dir_name,DSID,parameters[model]["nEvents"],random)
+    if doGridpack :
+      path_command = "JOBOPTSEARCHPATH=/afs/cern.ch/work/k/kpachal/PhaseIITrack/Signals/Generation/ControlFiles_Gridpack/:$JOBOPTSEARCHPATH"
+      setup_command = "setupATLAS -c slc6;\n"
+      if creation : use_events = 5
+      else : use_events = parameters[model]["nEvents"]
+      generate_command = "Gen_tf.py --ecmEnergy={0} --firstEvent=1 --jobConfig={1}/{2} --maxEvents={3} --outputEVNTFile=test_evgen.EVNT.root --randomSeed={4}".format(CME,dir_name,DSID,use_events,random)
+      if creation :
+        generate_command += " --outputFileValidation=False"
+      else :
+        # Copy gridpack from location it was generated
+        gridpack_list = glob.glob(dir_name.replace("_testing","")+"/*.tar.gz")
+        if len(gridpack_list) != 1 :
+          print "Didn't find gridpack! List was:"
+          exit(1)
+        gridpack_name = gridpack_list[0]
+        shutil.copy(gridpack_name,jo_subdir)
+        # Now it should be picked up automatically.
+
+    else :
+      path_command = "JOBOPTSEARCHPATH=/afs/cern.ch/work/k/kpachal/PhaseIITrack/Signals/Generation/ControlFiles/:$JOBOPTSEARCHPATH"
+      setup_command = ""
+      generate_command = "Gen_tf.py --ecmEnergy={0} --firstEvent=1 --jobConfig={1}/{2} --maxEvents={3} --outputEVNTFile=test_evgen.EVNT.root --randomSeed={4}".format(CME,dir_name,DSID,parameters[model]["nEvents"],random)
+    
+    # Common stuff
     # Add this back in if I have my own Athena mods at some point
-    source_command = "source ../Filtering/build/x86_64-centos7-gcc62-opt/setup.sh"
-    run_command = """echo 'starting job.';\ncd {0};\nasetup --restore;\n{1};\n{4};\ncd {2};\n{3}\n""".format(os.getcwd(),path_command,dir_name,generate_command,source_command)
+    #source_command = "asetup --restore;\nsource ../Filtering/build/x86_64-centos7-gcc62-opt/setup.sh"
+    source_command = setup_command+"asetup 21.6.59,AthGeneration"
+    run_command = """echo 'starting job.';\ncd {0};\n{1};\n{4};\ncd {2};\n{3}\n""".format(os.getcwd(),path_command,dir_name,generate_command,source_command)
 
     if isTest :
       print(generate_command)
@@ -146,7 +182,13 @@ for model in doModels :
     if useBatch :
 
       # Make batch script
-      batchmanager.send_job(run_command,tag_string)
+      script_string = tag_string
+      if doGridpack :
+        if creation :
+          script_string += "_gridpack"
+        else :
+          script_string += "_gridpack_testing"
+      batchmanager.send_job(run_command,script_string)
 
     else :
       local_command = "cd {0};".format(dir_name)+generate_command
