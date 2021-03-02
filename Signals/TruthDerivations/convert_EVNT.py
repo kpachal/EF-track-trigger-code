@@ -16,9 +16,12 @@ useBatch = True
 tag = "" #"higgsportal"
 
 # Getting EVNT files
-source_dir = "/eos/user/k/kpachal/PhaseIITrack/Signals/small_nevts"
-out_dir_parent = "/eos/user/k/kpachal/PhaseIITrack/TruthDerivations/"
-find_format = source_dir+"/run_*{0}*/{0}*/*.EVNT.root".format(tag)
+#source_dir = "/eos/user/k/kpachal/PhaseIITrack/Signals/small_nevts"
+#out_dir_parent = "/eos/user/k/kpachal/PhaseIITrack/TruthDerivations/"
+#find_format = source_dir+"/run_*{0}*/{0}*/*.EVNT.root".format(tag)
+source_dir = "/eos/user/k/kpachal/PhaseIITrack/Signals/central_samples"
+out_dir_parent = "/eos/user/k/kpachal/PhaseIITrack/TruthDerivations/central_samples/"
+find_format = source_dir+"/mc15_14TeV.*/EVNT*.root*"
 print "Searching for files matching",find_format,"..."
 evnt_files = glob.glob(find_format)
 print "Got files:",evnt_files

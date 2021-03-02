@@ -72,8 +72,23 @@ def approximated0(particle) :
 
   r = particle.prodVtx().perp()
   delta_phi = vertex_vector.DeltaPhi(child_vector)
-  approx_d0 = r * math.sin(abs(delta_phi))
+  #approx_d0 = r * math.sin(abs(delta_phi))
+  approx_d0 = r * math.sin(delta_phi)
   return(approx_d0)
+
+def approximatez0(particle) :
+
+  # Taking equivalent approach to d0 but with theta.
+  vertex_vector = ROOT.TVector3()
+  vertex_vector.SetPtEtaPhi(particle.prodVtx().perp(),particle.prodVtx().eta(), particle.prodVtx().phi())
+  child_vector = ROOT.TVector3()
+  child_vector.SetPtEtaPhi(particle.pt(), particle.eta(), particle.phi())
+
+  r = particle.prodVtx().perp()
+  delta_theta = ROOT.TVector2.Phi_mpi_pi(vertex_vector.Theta()-child_vector.Theta())
+  #approx_z0 = r * math.sin(abs(delta_theta))
+  approx_z0 = r * math.sin(delta_theta)
+  return(approx_z0)  
 
 # Depth-first search of particle decay paths
 # Based on this stackoverflow example:
