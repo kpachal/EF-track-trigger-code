@@ -10,7 +10,7 @@ import glob
 from TruthParticleFunctions import *
 
 # User settings
-inputfile_form = "/eos/user/k/kpachal/PhaseIITrack/TruthDerivations/fromJahred/DAOD_TRUTH1.*.root"
+inputfile_form = "/eos/user/k/kpachal/PhaseIITrack/TruthDerivations/central_samples/*/DAOD_TRUTH1.*.root"
 
 # Print progress
 verbose = True
@@ -41,7 +41,7 @@ for inputfile in file_list :
   h_particle_prodRadius = TH1D("h_distance_to_prodvertex","h_distance_to_prodvertex", 100, 0, 300) 
 
   h_stableparticle_PID = TH1D("h_stableparticle_PID","h_stableparticle_PID", 20, 0 ,20) 
-  h_stableparticle_eta = TH1D("h_stableparticle_eta","h_stableparticle_eta", 70, -3.5 ,3.5)
+  h_stableparticle_eta = TH1D("h_stableparticle_eta","h_stableparticle_eta", 70, -4.0 ,4.0)
   h_stableparticle_phi = TH1D("h_stableparticle_phi","h_stableparticle_phi", 64, -3.2 ,3.2)
   h_stableparticle_pT = TH1D("h_stableparticle_pT","h_stableparticle_pT", 200, 0, 1000)
   h_stableparticle_d0 = TH1D("h_stableparticle_d0","h_stableparticle_d0", 200, -300 ,300)
@@ -51,6 +51,7 @@ for inputfile in file_list :
   # 2D histograms
   h_stableparticle_eta_d0 = TH2D("h_stableparticle_eta_vs_d0","h_stableparticle_eta_vs_d0", 70, -3.5, 3.5, 200, -300 ,300)  
   h_stableparticle_eta_z0 = TH2D("h_stableparticle_eta_vs_z0","h_stableparticle_eta_vs_z0", 70, -3.5, 3.5, 200, -800 ,800)
+  h_stableparticle_d0_z0 = TH2D("h_stableparticle_d0_vs_z0","h_stableparticle_do_vs_z0", 200, -300 ,300, 200, -800 ,800)  
 
   for entry in xrange( t.GetEntries() ):
     t.GetEntry( entry )
@@ -86,7 +87,8 @@ for inputfile in file_list :
       h_stableparticle_z0.Fill(approximatez0(particle))
 
       h_stableparticle_eta_d0.Fill(particle.eta(),approximated0(particle))
-      h_stableparticle_eta_z0.Fill(particle.eta(),approximatez0(particle))
+      h_stableparticle_eta_z0.Fill(particle.eta(),approximatez0(particle)) 
+      h_stableparticle_d0_z0.Fill(approximated0(particle),approximatez0(particle))
     
     #break
 
@@ -104,5 +106,9 @@ for inputfile in file_list :
   h_nParticles.Write()
   h_stableparticle_eta_d0.Write()
   h_stableparticle_eta_z0.Write()
+  h_stableparticle_d0_z0.Write()
   outputFile.Close()
   print "Created file",outputFile
+
+# Sum file
+outputFile = TFile("outputFiles/all_single_muons_output.root","RECREATE")

@@ -9,6 +9,10 @@ myPainter.setColourPalette("notSynthwave")
 myPainter.setLabelType(4) # Sets label type i.e. Internal, Work in progress etc.
                           # See below for label explanation
 
+# Turn off CME and luminosity labels
+myPainter.luminosity = -1000
+myPainter.CME = -100
+
 # 0 Just ATLAS    
 # 1 "Preliminary"
 # 2 "Internal"
@@ -20,7 +24,11 @@ myPainter.setLabelType(4) # Sets label type i.e. Internal, Work in progress etc.
 # Dir in which to look for files
 file_dir = "outputFiles"                     
 
-doSamples = ["etaFlat0103"]
+doSamples = ["etaFlat0103","etaFlat0709","etaFlat1214","etaFlat3234"]
+
+sum2DHists = {"h_stableparticle_eta_vs_d0" : None,
+              "h_stableparticle_eta_vs_z0" : None,
+              "h_stableparticle_d0_vs_z0" : None}
 
 for sample in doSamples :
 
@@ -72,12 +80,32 @@ for sample in doSamples :
    # 2D hists
    h_particle_eta_d0 = openfile.Get("h_stableparticle_eta_vs_d0")
    h_particle_eta_d0.SetDirectory(0)
-   myPainter.draw2DHist(h_particle_eta_d0,plotdir+"/stableparticle_eta_vs_d0","#eta","Approximate d_{0}","Muons",-3.2,3.2,-200,200)
+   myPainter.draw2DHist(h_particle_eta_d0,plotdir+"/stableparticle_eta_vs_d0","#eta","Approximate d_{0}","Muons",-4.0,4.0,-200,200)
+   if not sum2DHists["h_stableparticle_eta_vs_d0"] :
+     sum2DHists["h_stableparticle_eta_vs_d0"] = h_particle_eta_d0
+   else :
+     sum2DHists["h_stableparticle_eta_vs_d0"].Add(h_particle_eta_d0)
+
    h_particle_eta_z0 = openfile.Get("h_stableparticle_eta_vs_z0")
    h_particle_eta_z0.SetDirectory(0)
-   myPainter.draw2DHist(h_particle_eta_z0,plotdir+"/stableparticle_eta_vs_z0","#eta","Approximate z_{0}","Muons",-3.2,3.2,-200,200)   
+   myPainter.draw2DHist(h_particle_eta_z0,plotdir+"/stableparticle_eta_vs_z0","#eta","Approximate z_{0}","Muons",-4.0,4.0,-200,200)   
+   if not sum2DHists["h_stableparticle_eta_vs_z0"] :
+     sum2DHists["h_stableparticle_eta_vs_z0"] = h_particle_eta_z0
+   else :
+     sum2DHists["h_stableparticle_eta_vs_z0"].Add(h_particle_eta_z0)
+
+   h_particle_d0_z0 = openfile.Get("h_stableparticle_d0_vs_z0")
+   h_particle_d0_z0.SetDirectory(0)
+   myPainter.draw2DHist(h_particle_d0_z0,plotdir+"/stableparticle_d0_vs_z0","Approximate d_{0}","Approximate z_{0}","Charged LLP decay products",-200,200,-200,200)
+   if not sum2DHists["h_stableparticle_d0_vs_z0"] :
+     sum2DHists["h_stableparticle_d0_vs_z0"] = h_particle_d0_z0
+   else :
+     sum2DHists["h_stableparticle_d0_vs_z0"].Add(h_particle_d0_z0)
 
    openfile.Close()
 
+myPainter.draw2DHist(sum2DHists["h_stableparticle_eta_vs_d0"],"plots/sumsinglemu_stableparticle_eta_vs_d0","#eta","Approximate d_{0}","Muons",-4.0,4.0,-200,200)
 
-#myPainter.drawManyOverlaidHistograms(hist_list,name_list,"m_{gluino} [GeV]","Events/1000","plots/gluino_mass","automatic","automatic",0,35,extraLegendLines=["Nominal values"],doLogX=False,doLogY=False,doLegendLow=False,doATLASLabel="None")
+myPainter.draw2DHist(sum2DHists["h_stableparticle_eta_vs_z0"],"plots/sumsinglemu_stableparticle_eta_vs_z0","#eta","Approximate z_{0}","Muons",-4.0,4.0,-200,200)
+
+myPainter.draw2DHist(sum2DHists["h_stableparticle_d0_vs_z0"], "plots/sumsinglemu_stableparticle_d0_vs_z0","Approximate d_{0}","Approximate z_{0}","Charged LLP decay products",-200,200,-200,200)

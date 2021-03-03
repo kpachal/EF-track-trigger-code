@@ -20,6 +20,8 @@ myPainter.setLabelType(4) # Sets label type i.e. Internal, Work in progress etc.
 # Dir in which to look for files
 file_dir = "outputFiles"                     
 
+tag = "_pTcut5"
+
 samples = {
    "slep" : {
       "doChildren" : False,
@@ -38,7 +40,7 @@ for sample in doSamples :
   doChildren = samples[sample]["doChildren"]
 
   ## Collect histograms
-  files = glob.glob(file_dir+"/DAOD_TRUTH1.*{0}*.pool_output.root".format(sample))
+  files = glob.glob(file_dir+"/DAOD_TRUTH1.*{0}*.pool{1}_output.root".format(sample,tag))
   print "Files to plot:",files
 
   # Get and plot histos
@@ -46,7 +48,7 @@ for sample in doSamples :
 
     namestring = filename.split("/")[-1].split(".")[1]
     print namestring
-    plotdir = "plots/{0}".format(namestring)
+    plotdir = "plots/{0}{1}".format(namestring,tag)
     if not os.path.exists(plotdir) :
       os.mkdir(plotdir)
 
@@ -91,7 +93,22 @@ for sample in doSamples :
       myPainter.drawBasicHistogram(h_particle_pT,1,h_particle_pT.FindBin(100),"p_{T} [GeV]","Charged LLP decay products",plotdir+"/stableparticle_pT",True,True,False,False,ROOT.kAzure+7)      
       h_particle_d0 = openfile.Get("h_stableparticle_d0")
       h_particle_d0.SetDirectory(0)
-      myPainter.drawBasicHistogram(h_particle_d0,1,h_particle_d0.FindBin(300),"Approximate d_{0}","Charged LLP decay products",plotdir+"/stableparticle_d0",True,True,False,False,ROOT.kAzure+7)     
+      myPainter.drawBasicHistogram(h_particle_d0,h_particle_d0.FindBin(-300),h_particle_d0.FindBin(300),"Approximate d_{0}","Charged LLP decay products",plotdir+"/stableparticle_d0",True,True,False,False,ROOT.kAzure+7)     
+      h_particle_z0 = openfile.Get("h_stableparticle_z0")
+      h_particle_z0.SetDirectory(0)
+      myPainter.drawBasicHistogram(h_particle_z0,h_particle_z0.FindBin(-300),h_particle_z0.FindBin(300),"Approximate z_{0}","Charged LLP decay products",plotdir+"/stableparticle_z0",True,True,False,False,ROOT.kAzure+7)     
+
+      # 2D hists
+      h_particle_eta_d0 = openfile.Get("h_stableparticle_eta_vs_d0")
+      h_particle_eta_d0.SetDirectory(0)
+      myPainter.draw2DHist(h_particle_eta_d0,plotdir+"/stableparticle_eta_vs_d0","#eta","Approximate d_{0}","Charged LLP decay products",-3.2,3.2,-200,200)
+      h_particle_eta_z0 = openfile.Get("h_stableparticle_eta_vs_z0")
+      h_particle_eta_z0.SetDirectory(0)
+      myPainter.draw2DHist(h_particle_eta_z0,plotdir+"/stableparticle_eta_vs_z0","#eta","Approximate z_{0}","Charged LLP decay products",-3.2,3.2,-200,200)         
+      h_particle_d0_z0 = openfile.Get("h_stableparticle_d0_vs_z0")
+      h_particle_d0_z0.SetDirectory(0)
+      myPainter.draw2DHist(h_particle_d0_z0,plotdir+"/stableparticle_d0_vs_z0","Approximate d_{0}","Approximate z_{0}","Charged LLP decay products",-200,200,-200,200)    
+
     openfile.Close()
 
 

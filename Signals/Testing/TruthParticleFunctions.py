@@ -85,7 +85,7 @@ def approximatez0(particle) :
   child_vector.SetPtEtaPhi(particle.pt(), particle.eta(), particle.phi())
 
   r = particle.prodVtx().perp()
-  delta_theta = ROOT.TVector2.Phi_mpi_pi(vertex_vector.Theta()-child_vector.Theta())
+  delta_theta = ROOT.TVector2.Phi_mpi_pi(child_vector.Theta()-vertex_vector.Theta())
   #approx_z0 = r * math.sin(abs(delta_theta))
   approx_z0 = r * math.sin(delta_theta)
   return(approx_z0)  
