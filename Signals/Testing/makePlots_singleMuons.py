@@ -24,7 +24,7 @@ myPainter.CME = -100
 # Dir in which to look for files
 file_dir = "outputFiles"                     
 
-doSamples = ["etaFlat0103","etaFlat0709","etaFlat1214","etaFlat3234"]
+doSamples = ["etaFlat0103","etaFlat0709","etaFlat1214","etaFlat2022","etaFlat3234"]
 
 sum2DHists = {"h_stableparticle_eta_vs_d0" : None,
               "h_stableparticle_eta_vs_z0" : None,
