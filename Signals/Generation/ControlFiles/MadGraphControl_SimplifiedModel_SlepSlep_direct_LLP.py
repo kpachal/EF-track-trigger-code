@@ -63,7 +63,7 @@ evgenConfig.keywords += ['SUSY','slepton','longLived','gravitino','simplifiedMod
 evgenConfig.description = 'Direct slepton/stau-pair production in simplified model with non-prompt decays, m_sleptonLR = %s GeV, lifetime = %s'%(mslep,lifetime)
 
 if lifetime != 0:
-  evgenConfig.specialConfig = 'GMSBSlepton=%s*GeV;GMSBGravitino=%s*GeV;GMSBSleptonTime=%s*ns;preInclude=SimulationJobOptions/preInclude.SleptonsLLP.py' % (mslep,0.0000001,lifetime)
+  evgenConfig.specialConfig = 'GMSBStau=%s*GeV;GMSBSlepton=%s*GeV;GMSBGravitino=%s*GeV;GMSBSleptonTime=%s*ns;GMSBStauTime=%s*ns;preInclude=SimulationJobOptions/preInclude.SleptonsLLP.py' % (mslep,mslep,0.0000001,lifetime,lifetime)
 
 # Filter and event multiplier 
 evt_multiplier = 200
