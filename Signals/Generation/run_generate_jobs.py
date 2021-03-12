@@ -14,7 +14,7 @@ isTest = False
 doGridpack = True
 # If true, create the gridpack
 # If false, run with it
-creation = False
+creation = True
 
 # CME:
 # Currently 14 TeV, but should also do 100.
@@ -26,7 +26,7 @@ useBatch = True
 batch_type = "condor"
 
 # Turn on only what you want for smaller tests
-doModels = ["rhadron","slep"]
+doModels = ["slep"]
 
 # If some jobs failed, regenerate just those.
 # If this list is empty, will do everything.
@@ -68,6 +68,14 @@ grid = {
    "lifetime" : [1],
    "joTemplate" : "mc.MGPy8EG_A14NNPDF23LO_GG_qqn1_{0}_{1}_rpvLF_{2}ns.py",
    "controlFile" : "MadGraphControl_SimplifiedModel_RPV_LLP_Filtered.py",
+ },
+ "smuon" :{
+   "documentation" : "https://its.cern.ch/jira/browse/ATLMCPROD-5638 plus edits from TrackTrigStudy",
+   "mPar" : [50],
+   "mChild" : [0],
+   "lifetime" : [0.1],
+   "joTemplate" : "mc.MGPy8EG_A14NNPDF23LO_SmuSmu_LLP_{0}_{1}_{2}ns.py",
+   "controlFile" : "MadGraphControl_SimplifiedModel_SmuSmu_direct_LLP.py",   
  }
 }
 
@@ -84,6 +92,10 @@ parameters = {
    "rundir" : "/eos/user/k/kpachal/PhaseIITrack/Signals/run_rhadron",
   "nEvents" : 50,
  },
+ "smuon" : {
+   "rundir" : "/eos/user/k/kpachal/PhaseIITrack/Signals/run_smuon",
+   "nEvents" : 500
+ }
 }
 
 
