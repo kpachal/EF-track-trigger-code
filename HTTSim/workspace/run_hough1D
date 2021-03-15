@@ -1,0 +1,12 @@
+#!/bin/bash
+
+InFile='/eos/atlas/atlascerngroupdisk/det-htt/HTTsim/ATLAS-P2-ITK-17-06-00/21.9.2/eta0103phi0305/Wrappers/httsim_rawhits_singlemuon_10k_wrap.root'
+
+
+cd rundir_hough1D/
+HTTLogicalHitsToAlg_tf.py \
+    --InFileName $InFile \
+    --maxEvents 6000 \
+    --bankTag 'jahreda_20-07-20' \
+    --hough_1d True \
+    --OutFileName your_output.root \

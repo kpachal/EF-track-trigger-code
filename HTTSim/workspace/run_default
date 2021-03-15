@@ -1,0 +1,11 @@
+#!/bin/bash
+
+InFile='/eos/atlas/atlascerngroupdisk/det-htt/HTTSim/wrapper_files/test_wrapper_dec4_fixcoords_0.1-0.3_0.3-0.5.jahred.root'
+
+
+cd rundir_default/
+HTTLogicalHitsToAlg_tf.py \
+    --InFileName $InFile \
+    --maxEvents 6000 \
+    --bankTag 'jahreda_20-07-20' \
+    --OutFileName your_output.root \

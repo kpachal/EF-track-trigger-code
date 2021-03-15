@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#InFile='/eos/atlas/atlascerngroupdisk/det-htt/HTTSim/wrapper_files/test_wrapper_dec4_fixcoords_0.1-0.3_0.3-0.5.jahred.root'
+InFile='/eos/user/k/kpachal/PhaseIITrack/Signals/HTT_wrappers/mc15_14TeV.900245.PG_singmuInvPtFlat5_etaFlat2022_verylarged0.HTTwrapper//OUT.ESD.pool.root'
+
+cd rundir_hough/
+HTTLogicalHitsToAlg_tf.py \
+    --InFileName $InFile \
+    --maxEvents 6000 \
+    --hough True \
+    --bankTag 'jahreda_20-07-20' \
+    --OutFileName your_output.root \

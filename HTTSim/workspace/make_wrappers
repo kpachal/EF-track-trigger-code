@@ -1,0 +1,29 @@
+#!/bin/sh
+
+#RDOFILE=/eos/user/k/kpachal/PhaseIITrack/Signals/central_samples/mc15_14TeV.900243.PG_singmuInvPtFlat5_etaFlat0709_verylarged0.recon.RDO.e8312_s3642_s3643_r12392/RDO.24359452._003470.pool.root.1
+#RDOFILE=/eos/user/k/kpachal/PhaseIITrack/Signals/central_samples/mc15_14TeV.900239.PG_singmuInvPtFlat5_etaFlat0103_verylarged0.recon.RDO.e8312_s3642_s3643_r12392/RDO.24359506._002213.pool.root.1
+RDOFILE=/eos/user/k/kpachal/PhaseIITrack/Signals/central_samples/mc15_14TeV.900245.PG_singmuInvPtFlat5_etaFlat2022_verylarged0.recon.RDO.e8312_s3642_s3643_r12392/RDO.24359489._004558.pool.root.1
+
+#OUTDIR=/eos/user/k/kpachal/PhaseIITrack/Signals/HTT_wrappers/mc15_14TeV.900243.PG_singmuInvPtFlat5_etaFlat0709_verylarged0.HTTwrapper/
+#OUTDIR=/eos/user/k/kpachal/PhaseIITrack/Signals/HTT_wrappers/mc15_14TeV.900239.PG_singmuInvPtFlat5_etaFlat0103_verylarged0.HTTwrapper/
+#OUTDIR=/eos/user/k/kpachal/PhaseIITrack/Signals/HTT_wrappers/mc15_14TeV.900245.PG_singmuInvPtFlat5_etaFlat2022_verylarged0.HTTwrapper/
+OUTDIR=/eos/user/k/kpachal/PhaseIITrack/Signals/HTT_wrappers/test
+
+cd rundir_wrappers/
+
+# Removed 
+
+Reco_tf.py --skipEvents 0 --jobNumber 242000 \
+    --inputRDOFile    $RDOFILE \
+    --outputESDFile    $OUTDIR/OUT.ESD.pool.root \
+    --maxEvents 5 \
+    --digiSteeringConf StandardInTimeOnlyTruth \
+    --geometryVersion  ATLAS-P2-ITK-22-02-00 \
+    --conditionsTag    OFLCOND-MC15c-SDR-14-03 \
+    --DataRunNumber    242000 \
+    --imf all:'False' \
+    --postInclude all:'InDetSLHC_Example/postInclude.SLHC_Setup_ITK.py' RAWtoESD:'InDetSLHC_Example/postInclude.AnalogueClustering.py' \
+    --preExec 'all:from AthenaCommon.GlobalFlags import globalflags; globalflags.DataSource.set_Value_and_Lock("geant4");' RAWtoESD:'rec.UserAlgs=["TrigHTTInput/HTTSGToRawHitsWrapperAlg_jobOptions.py"];' \
+    --preInclude all:'InDetSLHC_Example/preInclude.SiliconOnly.py,InDetSLHC_Example/preInclude.SLHC_Setup.py,InDetSLHC_Example/preInclude.SLHC_Setup_Strip_GMX.py,InDetSLHC_Example/preInclude.SLHC_Calorimeter_mu0.py' 'default:InDetSLHC_Example/preInclude.SLHC.SiliconOnly.Reco.py,InDetSLHC_Example/SLHC_Setup_Reco_TrackingGeometry_GMX.py'  \
+    --postExec all:'ServiceMgr.PixelLorentzAngleSvc.ITkL03D = True' HITtoRDO:'CfgMgr.MessageSvc().setError+=["HepMcParticleLink"];'
+
